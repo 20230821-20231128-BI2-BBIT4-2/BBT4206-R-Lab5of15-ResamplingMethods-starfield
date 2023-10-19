@@ -1,0 +1,59 @@
+# **DATASET 1: Pima Indians Diabetes - Data Summary and Preprocessing**
+```{r}
+if (!is.element("mlbench", installed.packages()[, 1])) {
+  install.packages("mlbench", dependencies = TRUE)
+}
+require("mlbench")
+
+data("PimaIndiansDiabetes")
+summary(PimaIndiansDiabetes)
+```
+
+# **Exploring the Dataset Structure**
+```{r}
+str(PimaIndiansDiabetes)
+```
+#**Data Preprocessing: Splitting the Dataset**
+```{r}
+library(caret)
+
+train_index <- createDataPartition(PimaIndiansDiabetes$diabetes,
+                                   p = 0.75,
+                                   list = FALSE)
+Pima_Indians_Diabetes_dataset_train <- PimaIndiansDiabetes[train_index, ]
+Pima_Indians_Diabetes_dataset_test <- PimaIndiansDiabetes[-train_index, ]
+
+```
+# **Utilizing the naiveBayes() Function in the "e1071" Package**
+
+```{r}
+Pima_Indians_Diabetes_dataset_model_nb_e1071 <- # nolint
+  e1071::naiveBayes(diabetes ~ pregnant + glucose + pressure + triceps + insulin + mass +
+                      pedigree + age,
+                    data = Pima_Indians_Diabetes_dataset_train)
+```
+
+# **Testing the Trained Model on the Testing Dataset**
+```{r}
+predictions_nb_e1071 <-
+  predict(Pima_Indians_Diabetes_dataset_model_nb_e1071,
+          Pima_Indians_Diabetes_dataset_test[, c("pregnant", "glucose", "pressure", "triceps",
+                                     "insulin", "mass", "pedigree",
+                                     "age"
+                                     )])
+```
+
+# **Examining the Model Results**
+```{r}
+print(predictions_nb_e1071)
+caret::confusionMatrix(predictions_nb_e1071,
+                       Pima_Indians_Diabetes_dataset_test[,c("pregnant", "glucose", "pressure", "triceps",
+                                                             "insulin", "mass", "pedigree",
+                                                             "age", "diabetes")]$diabetes)
+
+plot(table(predictions_nb_e1071,
+           Pima_Indians_Diabetes_dataset_test[,c ("pregnant", "glucose", "pressure", "triceps",
+                                                 "insulin", "mass", "pedigree",
+                                                 "age", "diabetes")]$diabetes))
+
+```

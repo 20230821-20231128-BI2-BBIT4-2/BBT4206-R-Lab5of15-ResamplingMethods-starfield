@@ -487,6 +487,7 @@ predictions_lm_new_data <-
 
 # The output below refers to the total orders:
 print(predictions_lm_new_data)
+summary(demand_forecasting_dataset_model_lm)
 
 # DATASET 4 (CV, Repeated CV, and LOOCV): Iranian Churn Dataset ----
 churn_dateset <- read_csv(
