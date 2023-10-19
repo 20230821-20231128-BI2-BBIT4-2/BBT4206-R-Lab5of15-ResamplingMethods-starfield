@@ -15,12 +15,12 @@ editor_options:
 
 # Student Details
 
-|                                              |     |
-|----------------------------------------------|-----|
-| **Student ID Number**                        | ... |
-| **Student Name**                             | ... |
-| **BBIT 4.2 Group**                           | ... |
-| **BI Project Group Name/ID (if applicable)** | ... |
+|                                              |        |
+|----------------------------------------------|--------|
+| **Student ID Number**                        | 134782, 134783, 135232, 122998 |
+| **Student Name**                             | Yasmin Choma, Moses Mbugua, Sadiki Hamisi,Glenn Oloo  |
+| **BBIT 4.2 Group**                           | Group A    |
+| **BI Project Group Name/ID (if applicable)** | Starfield    |
 
 # Setup Chunk
 
@@ -49,11 +49,69 @@ The dataset that was used can be downloaded here: *\<provide a link\>*
 *\<Cite the dataset here using APA\>\
 Refer to the APA 7th edition manual for rules on how to cite datasets: <https://apastyle.apa.org/style-grammar-guidelines/references/examples/data-set-references>*
 
-```{r Dataset Loader}
-library(readr)
+# **DATASET 1: Pima Indians Diabetes - Data Summary and Preprocessing**
 
-# Provide the executable R code inside the various code chunks as guided by the
-# lab work.
+```{r}
+if (!is.element("mlbench", installed.packages()[, 1])) {
+  install.packages("mlbench", dependencies = TRUE)
+}
+require("mlbench")
+
+data("PimaIndiansDiabetes")
+summary(PimaIndiansDiabetes)
 ```
 
-...to be continued
+# **Exploring the Dataset Structure**
+
+```{r}
+str(PimaIndiansDiabetes)
+```
+
+\#**Data Preprocessing: Splitting the Dataset**
+
+```{r}
+library(caret)
+
+train_index <- createDataPartition(PimaIndiansDiabetes$diabetes,
+                                   p = 0.75,
+                                   list = FALSE)
+Pima_Indians_Diabetes_dataset_train <- PimaIndiansDiabetes[train_index, ]
+Pima_Indians_Diabetes_dataset_test <- PimaIndiansDiabetes[-train_index, ]
+
+```
+
+# **Utilizing the naiveBayes() Function in the "e1071" Package**
+
+```{r}
+Pima_Indians_Diabetes_dataset_model_nb_e1071 <- # nolint
+  e1071::naiveBayes(diabetes ~ pregnant + glucose + pressure + triceps + insulin + mass +
+                      pedigree + age,
+                    data = Pima_Indians_Diabetes_dataset_train)
+```
+
+# **Testing the Trained Model on the Testing Dataset**
+
+```{r}
+predictions_nb_e1071 <-
+  predict(Pima_Indians_Diabetes_dataset_model_nb_e1071,
+          Pima_Indians_Diabetes_dataset_test[, c("pregnant", "glucose", "pressure", "triceps",
+                                     "insulin", "mass", "pedigree",
+                                     "age"
+                                     )])
+```
+
+# **Examining the Model Results**
+
+```{r}
+print(predictions_nb_e1071)
+caret::confusionMatrix(predictions_nb_e1071,
+                       Pima_Indians_Diabetes_dataset_test[,c("pregnant", "glucose", "pressure", "triceps",
+                                                             "insulin", "mass", "pedigree",
+                                                             "age", "diabetes")]$diabetes)
+
+plot(table(predictions_nb_e1071,
+           Pima_Indians_Diabetes_dataset_test[,c ("pregnant", "glucose", "pressure", "triceps",
+                                                 "insulin", "mass", "pedigree",
+                                                 "age", "diabetes")]$diabetes))
+
+```

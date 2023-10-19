@@ -114,3 +114,4 @@ plot(table(predictions_nb_e1071,
            Pima_Indians_Diabetes_dataset_test[,c ("pregnant", "glucose", "pressure", "triceps",
                                                  "insulin", "mass", "pedigree",
                                                  "age", "diabetes")]$diabetes))
+
